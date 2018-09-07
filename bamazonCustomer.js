@@ -20,32 +20,47 @@ connection.connect(function(err) {
 
 function queryAllItems() {
   connection.query("SELECT * FROM products", function(err, res) {
+	  console.log("\n");
     for (var i = 0; i < res.length; i++) {
       console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price);
     }
-    console.log("-----------------------------------");
-	start();
+    console.log("-----------------------------------\n");
+	start(res.length);
   });
 }
 
 
 // function which prompts the user for what action they should take
-function start() {
+function start(totalItems) {
   inquirer
-    .prompt([{
+    .prompt({
       name: "item",
       type: "input",
-      message: "What is the ID of the product you would like to buy?",
-    },
-	{
+      message: "What is the ID of the product you would like to buy (q to quit)?",
+    })
+    .then(function(answer) {
+		if (answer.item.toLowerCase() == 'q') {
+			connection.end();
+                return;
+		}
+		if (parseInt(answer.item) > totalItems){
+			console.log("Sorry, that is not a listed item. Please choose again.");
+			start(totalItems);
+			return;
+		}
+		itemQuant(answer.item)
+    });
+}
+
+function itemQuant(item){
+	inquirer
+    .prompt({
       name: "quantity",
       type: "input",
       message: "How many units would you like to buy?",
-    }]
-	)
-    .then(function(answer) {
-		var quant = answer.quantity;
-		itemCheck(answer.item, quant);
+    })
+	.then(function(answer) {
+		itemCheck(item, answer.quantity);
     });
 }
 
@@ -60,7 +75,7 @@ function itemCheck(item, quant) {
 			var newQuant = inStock - quant;
 			var cost = quant * res[0].price;
 			updateQuant(newQuant, item);
-			console.log("Thank you for the order, your total is " + cost);
+			console.log("\nThank you for the order, your total is " + cost + "\n");
 			queryAllItems();
 		}
 	  });
