@@ -43,6 +43,11 @@ function start(totalItems) {
 			connection.end();
                 return;
 		}
+		if (answer.item.match(/^[A-Za-z]+$/)){
+			console.log("Sorry, that is not a listed item. Please choose again.");
+			start(totalItems);
+			return;
+		}
 		if (parseInt(answer.item) > totalItems){
 			console.log("Sorry, that is not a listed item. Please choose again.");
 			start(totalItems);
