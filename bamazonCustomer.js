@@ -43,7 +43,7 @@ function start(totalItems) {
 			connection.end();
                 return;
 		}
-		if (answer.item.match(/^[A-Za-z]+$/)){
+		if (isNaN(parseInt(answer.item))){
 			console.log("Sorry, that is not a listed item. Please choose again.");
 			start(totalItems);
 			return;
@@ -65,6 +65,11 @@ function itemQuant(item){
       message: "How many units would you like to buy?",
     })
 	.then(function(answer) {
+		if (isNaN(parseInt(answer.quantity))){
+			console.log("Sorry, that was not a valid quantity. Please choose again.");
+			itemQuant(item);
+			return;
+		}
 		itemCheck(item, answer.quantity);
     });
 }
