@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require('cli-table3');
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -21,10 +22,16 @@ connection.connect(function(err) {
 function queryAllItems() {
   connection.query("SELECT * FROM products", function(err, res) {
 	  console.log("\n");
+	var table = new Table({
+		head: ['ID','Product', 'Department', 'Price'],
+		colWidths: [6,34,18,12]
+	});
     for (var i = 0; i < res.length; i++) {
-      console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price);
+		table.push(
+			[res[i].item_id, res[i].product_name, res[i].department_name,res[i].price]
+		);
     }
-    console.log("-----------------------------------\n");
+	 console.log(table.toString());
 	start(res.length);
   });
 }
@@ -85,7 +92,8 @@ function itemCheck(item, quant) {
 			var newQuant = inStock - quant;
 			var cost = quant * res[0].price;
 			updateQuant(newQuant, item);
-			console.log("\nThank you for the order, your total is " + cost + "\n");
+			updateSales(cost, item);
+			console.log("\nThank you for the order, your total is " + cost.toFixed(2) + "\n");
 			queryAllItems();
 		}
 	  });
@@ -98,6 +106,18 @@ function updateQuant(newQuant, item) {
 			},{
 				item_id: item
 			}],  function(err, res) {
+					return;
+				});
+}
+
+function updateSales(sales, item) {
+	var query = connection.query("UPDATE products SET ? WHERE ?",
+			[{
+				product_sales: parseFloat(sales)
+			},{
+				item_id: item
+			}],  function(err, res) {
+				console.log(res.affectedRows + " record(s) updated");
 					return;
 				});
 }
