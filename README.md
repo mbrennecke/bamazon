@@ -10,6 +10,10 @@ This project utilizes node.js and SQL to simulate buying items from a virtual st
 
 This project is useful for learning SQL commands from inside node applications. Including queries, joins, updates, creates, and modifies.
 
+## Link to video demo
+
+[Bamazon](https://drive.google.com/file/d/1z5EtFKRMxSQ0I-1UWc9Zl2MLrpBetu1N/view)
+
 ## Who maintains this project
 
 This project is maintained by Matthew Brennecke mbrennecke10@gmail.com
